@@ -27,9 +27,6 @@ public class PoPLPythonParser {
     //functions start
     public static void main (String[] args){
         ArrayList<ArrayList <String>> tokens = tokenizeFile();
-        tokens.forEach((line) -> {
-            line.forEach((token) -> System.out.println(token));
-        });
     }
 
     /*
