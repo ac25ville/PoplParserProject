@@ -7,20 +7,20 @@ statement: simple_state | compound_state;
 simple_state: (arithmetic | SKIP_ | variableDeclaration | functionCall);
 compound_state: (ifState | whileLoop | forLoop);
 
-ifState: IF;
+ifState: IF NAME comp_ops DIGIT+ COLON;
 whileLoop
-: WHILE SPACES NAME SPACES? comp_ops DIGIT+ 
-  (AND SPACES NAME SPACES? comp_ops DIGIT)? COLON
+: WHILE SPACES? NAME comp_ops DIGIT+ 
+  (AND NAME comp_ops DIGIT)? COLON
 ;
 forLoop: FOR ;
 
 arithmetic: DIGIT+ (PLUS | MINUS | DIVIDE | MULTIPLY | MOD | EXPONENT) DIGIT+;
 
 variableDeclaration
-: (NAME SPACES EQUAL SPACES (DIGIT | STRING)+SPACES)
-| (NAME SPACES MINUSEQUAL SPACES (NAME)SPACES);
+: (NAME EQUAL ' '(DIGIT+ | STRING)SPACES?)
+| (NAME MINUSEQUAL (NAME)SPACES?);
 
-functionCall: FUNCTION_NAME OPEN_PAREN (NAME ('_HP' | '!"')?| STRING) CLOSE_PAREN?CLOSE_PAREN;
+functionCall: NAME OPEN_PAREN (NAME | STRING) CLOSE_PAREN;
 
 SKIP_
  : (COMMENT) -> skip
@@ -32,19 +32,6 @@ DIVIDE: '/';
 MULTIPLY: '*';
 MOD: '%';
 EXPONENT: '^';
-
-DIGIT: [0-9];
-
-COMMENT: '#' ~[\r\n\f]*;
-SPACES
-: [ \r\n\t]+ -> channel (HIDDEN)
-;
-
-NAME: [A-Za-z_][A-Za-z_0-9]+ (SPACES);
-FUNCTION_NAME: [a-z]+;
-STRING:   QUOTE ( ESCAPE | ~('\'' | '\\' | '\n' | '\r') | [a-zA-Z_] | SPACES ) + QUOTE;
-
-fragment ESCAPE : '\\' ( '\'' | '\\' );
 
 //punctuation
 OPEN_PAREN: '(';
@@ -60,25 +47,38 @@ SINGLE_QUOTE: '\'';
 TIMESEQUAL: '*=';
 DIVIDEEQUAL: '/=';
 PLUSEQUAL: '+=';
-MINUSEQUAL: '-=';
+MINUSEQUAL: '-= ';
 MODEQUAL: '%=';
 EXPEQUAL: '^=';
 EQUAL: '=';
 
 //compare operators
 comp_ops: (EQUALTO | LESSTHAN | LESSTHANEQUAL | NOTEQUAL | GREATERTHAN | GREATERTHANEQUAL);
-EQUALTO: '==';
-LESSTHAN: '<';
-LESSTHANEQUAL: '<=';
-NOTEQUAL: '!=';
-GREATERTHAN: '>';
-GREATERTHANEQUAL: '>=';
+EQUALTO: '== ';
+LESSTHAN: '< ';
+LESSTHANEQUAL: '<= ';
+NOTEQUAL: '!= ';
+GREATERTHAN: '> ';
+GREATERTHANEQUAL: '>= ';
 
-WHILE: 'while';
-IF: 'if';
-ELSE: 'else';
-ELIF: 'elif';
-FOR: 'for';
-IN: 'in';
-AND: 'and';
+WHILE: 'while ';
+IF: 'if ';
+ELSE: 'else ';
+ELIF: 'elif ';
+FOR: 'for ';
+IN: ' in ';
+AND: ' and ';
 BREAK: 'break';
+
+
+DIGIT: [0-9];
+
+COMMENT: SPACES?'#' ~[\r\n\f]*SPACES?;
+SPACES
+: [ \r\n\t]+ -> channel (HIDDEN)
+;
+
+NAME: [A-Za-z_][A-Za-z_0-9]+ SPACES?;
+STRING: QUOTE ( ESCAPE | ~('\'' | '\\' | '\n' | '\r') | SPACES )+ QUOTE;
+
+fragment ESCAPE : '\\' ( '\'' | '\\' );
