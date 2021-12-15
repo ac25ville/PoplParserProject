@@ -9,3 +9,19 @@ MULTIPLY: '*';
 MOD: '%';
 EXPONENT: '^';
 DIGIT: ~[0-9];
+
+//edit assignments
+TIMESEQUAL: '*=';
+DIVIDEEQUAL: '/=';
+PLUSEQUAL: '+=';
+MINUSEQUAL: '-=';
+MODEQUAL: '%=';
+EXPEQUAL: '^=';
+
+//compare operators
+EQUALTO: '==';
+LESSTHAN: '<';
+LESSTHANEQUAL: '<=';
+NOTEQUAL: '!=';
+GREATERTHAN: '>';
+GREATERTHANEQUAL: '>=';
