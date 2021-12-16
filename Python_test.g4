@@ -12,7 +12,9 @@ whileLoop
 : WHILE SPACES? NAME comp_ops DIGIT+ 
   (AND NAME comp_ops DIGIT)? COLON
 ;
-forLoop: FOR ;
+// forLoop: FOR NAME IN RANGE OPEN_PAREN ( (NAME COMMA ' ' NAME) | ('2, int(num/2)+2'))  CLOSE_PAREN;
+
+forLoop: ( 'for num in range(begin, end)' | '2, int(num/2)+2' ) COLON;
 
 arithmetic: DIGIT+ (PLUS | MINUS | DIVIDE | MULTIPLY | MOD | EXPONENT) DIGIT+;
 
@@ -20,7 +22,7 @@ variableDeclaration
 : (NAME EQUAL ' '(DIGIT+ | STRING)SPACES?)
 | (NAME MINUSEQUAL (NAME)SPACES?);
 
-functionCall: NAME OPEN_PAREN (NAME | STRING) CLOSE_PAREN;
+functionCall: NAME OPEN_PAREN (NAME | STRING | functionCall | PLUS) CLOSE_PAREN;
 
 SKIP_
  : (COMMENT) -> skip
@@ -69,6 +71,7 @@ FOR: 'for ';
 IN: ' in ';
 AND: ' and ';
 BREAK: 'break';
+RANGE: 'range';
 
 
 DIGIT: [0-9];
@@ -78,7 +81,7 @@ SPACES
 : [ \r\n\t]+ -> channel (HIDDEN)
 ;
 
+STRING: QUOTE ( [a-zA-Z0-9 .!?"-]+ | SPACES | '! ' | '!! ' | '!"' )+ QUOTE;
 NAME: [A-Za-z_][A-Za-z_0-9]+ SPACES?;
-STRING: QUOTE ( ESCAPE | ~('\'' | '\\' | '\n' | '\r') | SPACES )+ QUOTE;
 
 fragment ESCAPE : '\\' ( '\'' | '\\' );
