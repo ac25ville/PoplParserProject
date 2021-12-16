@@ -8,7 +8,7 @@ simple_state: (arithmetic | SKIP_ | variableDeclaration | functionCall | breakSt
 compound_state: (ifState | whileLoop | forLoop | elseState);
 
 ifState
-: (IF | ELIF) OPEN_PAREN? NAME (comp_ops | arith_ops)  (DIGIT+ | '== ' DIGIT+) CLOSE_PAREN? COLON;
+: (IF | ELIF) OPEN_PAREN? NAME (comp_ops | arith_ops)  (DIGIT+ | EQUALTO DIGIT+ | 'i ') (EQUALTO DIGIT+)? CLOSE_PAREN? COLON;
 whileLoop
 : WHILE SPACES? NAME comp_ops DIGIT+ 
   (AND NAME comp_ops DIGIT)? COLON
@@ -19,10 +19,10 @@ breakState: BREAK;
 
 forLoop: ( 'for num in range(begin, end)' | 'for i in range(2, int(num/2)+2)' ) COLON;
 
-arithmetic: ' '? DIGIT+ ' '? (PLUS | MINUS | DIVIDE | MULTIPLY | MOD | EXPONENT) ' '? DIGIT+;
+arithmetic: (DIGIT+ ' '? (arith_ops) ' '? (DIGIT+)?)+;
 
 variableDeclaration
-: (NAME EQUAL ' '(DIGIT+ | STRING)SPACES?)
+: (NAME EQUAL ' '(DIGIT+ | STRING | arithmetic)SPACES?)
 | (NAME MINUSEQUAL (NAME)SPACES?);
 
 functionCall: NAME OPEN_PAREN (NAME | STRING | PLUS | strMethod)+ CLOSE_PAREN SPACES?;
@@ -77,11 +77,11 @@ ELIF: 'elif ';
 FOR: 'for ';
 IN: ' in ';
 AND: ' and ';
-BREAK: 'break'[\r\n]*;
+BREAK: 'break'[ \r\n]*;
 RANGE: 'range';
 
 
-DIGIT: [0-9];
+DIGIT: MINUS?[0-9];
 
 COMMENT: SPACES?'#' ~[\r\n\f]*SPACES?;
 SPACES
@@ -89,6 +89,6 @@ SPACES
 ;
 
 STRING: QUOTE ( [a-zA-Z0-9 .!?":'(-]+ | SPACES | '! ' | '!! ' | '!"' )+ QUOTE;
-NAME: [A-Za-z_][A-Za-z_0-9]+ SPACES?;
+NAME: [A-Za-z_][A-Za-z_0-9]* SPACES?;
 
 fragment ESCAPE : '\\' ( '\'' | '\\' );
