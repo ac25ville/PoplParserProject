@@ -30,7 +30,7 @@ while charmender_HP > 0 and squirtle_HP > 0:
 # Print winner pokemon
 if charmender_HP >= 1:
     print(name+"'s Charmender won!")
-elif squirtle_HP >=1:
+elif squirtle_HP >= 1:
     print(name+"'s Squirtle won!")
 else:
     print("Something went wrong!!!")
@@ -44,7 +44,7 @@ for num in range(begin, end):
         if(num == 2):
             print("Prime: "+str(num))
         for i in range(2, int(num/2)+2):
-            if (num%i==0):
+            if (num%i == 0):
                 break
             else:
                 print("Prime: "+str(num))
