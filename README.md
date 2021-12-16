@@ -34,3 +34,8 @@ $ grun Python_test fileInput python_test_code.py
     - optionally you can add -tokens, -tree, or -gui to the end
     
 * !! Note !! Make sure to have the test file in the directory you're running the code in. The file is hardlinked into the code
+
+## Video:
+
+https://user-images.githubusercontent.com/55512495/146307137-3d1b8fb0-43f3-4236-8808-8e710325870f.mp4
+
