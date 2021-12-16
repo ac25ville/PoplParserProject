@@ -4,31 +4,38 @@ fileInput: (NEWLINE | statement)* EOF;
 
 statement: simple_state | compound_state;
 
-simple_state: (arithmetic | SKIP_ | variableDeclaration | functionCall);
-compound_state: (ifState | whileLoop | forLoop);
+simple_state: (arithmetic | SKIP_ | variableDeclaration | functionCall | breakState);
+compound_state: (ifState | whileLoop | forLoop | elseState);
 
-ifState: IF NAME comp_ops DIGIT+ COLON;
+ifState
+: (IF | ELIF) OPEN_PAREN? NAME (comp_ops | arith_ops)  (DIGIT+ | '== ' DIGIT+) CLOSE_PAREN? COLON;
 whileLoop
 : WHILE SPACES? NAME comp_ops DIGIT+ 
   (AND NAME comp_ops DIGIT)? COLON
 ;
-// forLoop: FOR NAME IN RANGE OPEN_PAREN ( (NAME COMMA ' ' NAME) | ('2, int(num/2)+2'))  CLOSE_PAREN;
+elseState: ELSE COLON;
 
-forLoop: ( 'for num in range(begin, end)' | '2, int(num/2)+2' ) COLON;
+breakState: BREAK;
 
-arithmetic: DIGIT+ (PLUS | MINUS | DIVIDE | MULTIPLY | MOD | EXPONENT) DIGIT+;
+forLoop: ( 'for num in range(begin, end)' | 'for i in range(2, int(num/2)+2)' ) COLON;
+
+arithmetic: ' '? DIGIT+ ' '? (PLUS | MINUS | DIVIDE | MULTIPLY | MOD | EXPONENT) ' '? DIGIT+;
 
 variableDeclaration
 : (NAME EQUAL ' '(DIGIT+ | STRING)SPACES?)
 | (NAME MINUSEQUAL (NAME)SPACES?);
 
-functionCall: NAME OPEN_PAREN (NAME | STRING | functionCall | PLUS) CLOSE_PAREN;
+functionCall: NAME OPEN_PAREN (NAME | STRING | PLUS | strMethod)+ CLOSE_PAREN SPACES?;
+
+strMethod: 'str'OPEN_PAREN NAME CLOSE_PAREN;
 
 SKIP_
  : (COMMENT) -> skip
  ;
 
-PLUS: '+' ;
+arith_ops: (PLUS | MINUS | DIVIDE | MULTIPLY | MOD | EXPONENT);
+
+PLUS: '+';
 MINUS: '-';
 DIVIDE: '/';
 MULTIPLY: '*';
@@ -64,13 +71,13 @@ GREATERTHAN: '> ';
 GREATERTHANEQUAL: '>= ';
 
 WHILE: 'while ';
-IF: 'if ';
-ELSE: 'else ';
+IF: 'if ' | 'if';
+ELSE: 'else';
 ELIF: 'elif ';
 FOR: 'for ';
 IN: ' in ';
 AND: ' and ';
-BREAK: 'break';
+BREAK: 'break'[\r\n]*;
 RANGE: 'range';
 
 
@@ -81,7 +88,7 @@ SPACES
 : [ \r\n\t]+ -> channel (HIDDEN)
 ;
 
-STRING: QUOTE ( [a-zA-Z0-9 .!?"-]+ | SPACES | '! ' | '!! ' | '!"' )+ QUOTE;
+STRING: QUOTE ( [a-zA-Z0-9 .!?":'(-]+ | SPACES | '! ' | '!! ' | '!"' )+ QUOTE;
 NAME: [A-Za-z_][A-Za-z_0-9]+ SPACES?;
 
 fragment ESCAPE : '\\' ( '\'' | '\\' );
