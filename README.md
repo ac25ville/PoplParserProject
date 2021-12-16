@@ -16,10 +16,21 @@
 
 ## How to run it:
 
-* Make sure you have functioning java and javac commands, at least on windows that's how it works
+* Make sure you are on a unix based system. This can either be through WSL in windows, MacOS, or Linux.
 
-* Run javac PoPLPythonParser.java
+* run "sudo apt install default-jdk" in terminal
 
-* Run java PoPLPythonParser
+* run the following commands: 
+$ cd /usr/local/lib
+$ wget https://www.antlr.org/download/antlr-4.9.2-complete.jar
+$ export CLASSPATH=".:/usr/local/lib/antlr-4.9.2-complete.jar:$CLASSPATH"
+$ alias antlr4='java -jar /usr/local/lib/antlr-4.9.2-complete.jar'
+$ alias grun='java org.antlr.v4.gui.TestRig'
 
+* Run the following commands:
+$ antlr4 Python_test.g4
+$ javac Python_test*.java
+$ grun Python_test fileInput python_test_code.py
+    - optionally you can add -tokens, -tree, or -gui to the end
+    
 * !! Note !! Make sure to have the test file in the directory you're running the code in. The file is hardlinked into the code
